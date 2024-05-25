@@ -74,4 +74,16 @@ public class MemberController {
     public ResponseEntity<Map<String, Object>> getMe(@AuthenticationPrincipal AuthUser authUser) {
         return new ResponseEntity<>(Map.of("member", authUser), HttpStatus.OK);
     }
+    @Operation(summary = "send email - 이메일 인증 코드 전송", description = "")
+    @PostMapping("/email")
+    public ResponseEntity<Void> sendEmail(@RequestParam String email) {
+        memberService.sendEmailAndSaveTempData(email);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @Operation(summary = "confirm email - 이메일 & 코드 인증", description = "")
+    @GetMapping("/email-auth")
+    public ResponseEntity<Void> sendEmail(@RequestParam String email, @RequestParam String code) {
+        memberService.confirmEmailAndCode(email, code);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

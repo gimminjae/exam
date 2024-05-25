@@ -44,6 +44,9 @@ public class Member {
     @Column(columnDefinition = "varchar(50)", name = "username", nullable = false, unique = true)
     private String username;
 
+    @Column(columnDefinition = "varchar(50)", name = "email", nullable = false, unique = true)
+    private String email;
+
     @Column(columnDefinition = "varchar(255)", name = "password")
     private String password;
 
@@ -67,6 +70,7 @@ public class Member {
     private Member(LocalDateTime createDateTime,
                    LocalDateTime updateDateTime,
                    String username,
+                   String email,
                    String password,
                    String nickname,
                    MemberType memType) {
@@ -76,6 +80,7 @@ public class Member {
         this.password = password;
         this.nickname = nickname;
         this.memType = memType;
+        this.email = email;
     }
 
     public static Member from(MemberDto memberDto) {
@@ -83,6 +88,7 @@ public class Member {
                 .createDateTime(LocalDateTime.now())
                 .updateDateTime(LocalDateTime.now())
                 .username(memberDto.getUsername())
+                .email(memberDto.getEmail())
                 .nickname(memberDto.getNickname())
                 .password(memberDto.getPassword())
                 .memType(MemberType.valueOf(memberDto.getMemType()))

@@ -1,19 +1,21 @@
 package com.examback.member.service;
 
 import com.examback.common.jwt.provider.JwtProvider;
+import com.examback.common.mail.dto.MailTo;
+import com.examback.common.mail.service.GoogleEmailService;
 import com.examback.common.util.ObjectUtil;
+import com.examback.member.authcode.AuthCode;
+import com.examback.member.authcode.AuthCodeRedisRepository;
 import com.examback.member.dto.LoginDto;
 import com.examback.member.dto.MemberDto;
 import com.examback.member.dto.SignUpDto;
 import com.examback.member.entity.Member;
-import com.examback.member.exception.AlreadyExistMemberException;
-import com.examback.member.exception.NotCorrectTwoPasswordException;
-import com.examback.member.exception.NotFoundMemberException;
-import com.examback.member.exception.NotRightLoginInfoException;
+import com.examback.member.exception.*;
 import com.examback.member.refresh.entity.RefreshToken;
 import com.examback.member.refresh.repository.RefreshTokenRedisRepository;
 import com.examback.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,11 +32,16 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final GoogleEmailService googleEmailService;
+    private final AuthCodeRedisRepository authCodeRedisRepository;
 
     // 30 minutes
     private final static int ACCESS_TOKEN_MAXAGE = 60 * 30;
     private static final String NOT_CORRECT_TWO_PASSWORD = "두 개의 비밀번호가 일치하지 않습니다.";
     private static final String NICKNAME_CANNOT_USED = "사용할 수 없는 닉네임입니다.";
+    private final static String EMAIL_DUPLICATION_MSG = "사용할 수 없는 이메일입니다.";
+    private final static String EMAIL_FAIL_AUTH = "인증에 실패했습니다.\n다시 시도해주세요.";
+    private final static String EMAIL_NOT_CERTIFIED = "인증되지 않은 이메일입니다.\n인증 후 시도해주세요.";
     private static final String USERNAME_CANNOT_USED = "사용할 수 없는 아이디입니다.";
     private static final String NOT_FOUND_MEMBER = "회원 정보를 찾을 수 없습니다.";
     private static final String NOT_RIGHT_LOGIN_INFO = "아이디 혹은 비밀번호를 확인하세요.";
@@ -47,8 +54,13 @@ public class MemberServiceImpl implements MemberService {
             throw new NotCorrectTwoPasswordException(NOT_CORRECT_TWO_PASSWORD);
         }
         signUpDto.setPassword1(passwordEncoder.encode(signUpDto.getPassword1()));
+        Optional<AuthCode> optionalAuthCode = authCodeRedisRepository.findById(signUpDto.getEmail());
+        if (optionalAuthCode.isEmpty() || !optionalAuthCode.get().getCertifiedYn()) {
+            throw new NotCertifiedEmailException(EMAIL_NOT_CERTIFIED);
+        }
         Member member = Member.from(MemberDto.from(signUpDto));
         memberRepository.save(member);
+        authCodeRedisRepository.delete(optionalAuthCode.get());
     }
 
     @Override
@@ -117,6 +129,29 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void signOut(String memId) {
         deleteRefreshToken(memId);
+    }
+
+    @Override
+    public void sendEmailAndSaveTempData(String email) {
+        // 이메일에 대응하는 key 생성
+        // 이메일 전송
+        // redis에 email - key 저장
+        if (memberRepository.findByEmail(email).isPresent()) {
+            throw new DataIntegrityViolationException(EMAIL_DUPLICATION_MSG);
+        }
+        String authCode = ObjectUtil.generateRandomStringOnlyNumber();
+        googleEmailService.sendEmail(MailTo.sendEmailAuthCode(authCode, email));
+        authCodeRedisRepository.save(AuthCode.from(authCode, email));
+    }
+
+    @Override
+    public void confirmEmailAndCode(String email, String code) {
+        AuthCode authCode = ObjectUtil.isNullExceptionElseReturnObJect(authCodeRedisRepository.findById(email), EMAIL_FAIL_AUTH);
+        if (!authCode.getCode().equals(code)) {
+            throw new NotCorrectEmailAuthCodeException(EMAIL_FAIL_AUTH);
+        }
+        authCode.setCertifiedYn(true);
+        authCodeRedisRepository.save(authCode);
     }
 
     private void deleteRefreshToken(String memId) {

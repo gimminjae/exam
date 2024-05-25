@@ -21,4 +21,8 @@ public interface MemberService {
     String getAccessTokenWithRefreshToken(String refreshToken);
 
     void signOut(String memId);
+
+    void sendEmailAndSaveTempData(String email);
+
+    void confirmEmailAndCode(String email, String code);
 }

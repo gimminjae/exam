@@ -27,17 +27,17 @@ spring:
 #mybatis:
 #  configuration:
 #    map-underscore-to-camel-case: true
-#  mail:
-#    host: smtp.gmail.com
-#    port: 587
-#    username: ${MAIL_UN}
-#    password: ${MAIL_PW}
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
-#            required: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_UN}
+    password: ${MAIL_PW}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 #  custom:
 #    secretKey: secretkeysecretkeysecretkeysecretkeysecretkeysecretkey

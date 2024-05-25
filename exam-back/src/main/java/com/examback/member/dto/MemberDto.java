@@ -18,6 +18,7 @@ public class MemberDto {
     private LocalDateTime createDateTime;
     private LocalDateTime updateDateTime;
     private String username;
+    private String email;
     private String password;
     private String nickname;
     private String memType;
@@ -29,6 +30,7 @@ public class MemberDto {
                 .nickname(signUpDto.getNickname())
                 .password(signUpDto.getPassword1())
                 .memType(signUpDto.getMemType())
+                .email(signUpDto.getEmail())
                 .build();
     }
 
