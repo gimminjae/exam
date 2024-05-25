@@ -27,7 +27,7 @@ public class Member {
     @Column(columnDefinition = "varchar(100)", name = "memId")
     @GenericGenerator(
             name = "memId",
-            strategy = "com.boblogservice.common.generator.IdGenerator",
+            strategy = "com.examback.common.generator.IdGenerator",
             parameters = {
                     @Parameter(name = ENTITY_TYPE, value = "M"),
             }
