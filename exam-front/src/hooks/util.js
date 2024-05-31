@@ -8,8 +8,8 @@ const util = {
     }
     return `${searchParams.length === 0 ? '' : '?'}${searchParams.join('&')}`
   },
-  showError(error) {
-    return error.response.data.message || '오류가 발생하였습니다.'
+  showBasicError(error) {
+    return error.response.data || '오류가 발생하였습니다.'
   }
 }
 

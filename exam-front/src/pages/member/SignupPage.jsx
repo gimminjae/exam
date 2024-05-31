@@ -23,12 +23,12 @@ function SignUpForm() {
   const {callApi: checkUsername} = useApi({
     api: memberService.checkUsername,
     onSuccess: () => handleConfirmYnChange({id: 'username', value: true}),
-    onError: (error) => alert(util.showError(error))
+    onError: (error) => handleErrorsChange({id: 'username', value: util.showBasicError(error)})
   })
   const {callApi: checkNickname} = useApi({
     api: memberService.checkNickname,
     onSuccess: () => handleConfirmYnChange({id: 'nickname', value: true}),
-    onError: (error) => alert(util.showError(error))
+    onError: (error) => handleErrorsChange({id: 'nickname', value: util.showBasicError(error)})
   })
 
   const [memberForm, setMemberForm] = useState(initialMemberForm)
