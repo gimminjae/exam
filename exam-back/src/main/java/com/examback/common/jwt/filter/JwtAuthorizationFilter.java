@@ -1,8 +1,6 @@
 package com.examback.common.jwt.filter;
 
 
-
-
 import com.examback.common.jwt.provider.JwtProvider;
 import com.examback.member.dto.MemberDto;
 import com.examback.member.entity.AuthUser;
@@ -28,11 +26,11 @@ import java.util.Map;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
     private final MemberService memberService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = request.getHeader("Authentication");
-
-        log.info("jwt filter");
+        
         if (accessToken != null && !accessToken.isEmpty()) {
             // 1차 체크(정보가 변조되지 않았는지 체크)
             if (jwtProvider.verify(accessToken)) {
