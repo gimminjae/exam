@@ -53,6 +53,7 @@ function SignUpForm() {
   const handleCheckUsername = useCallback(async () => {
     await checkUsername(memberForm.username)
   }, [memberForm.username])
+  
 
   const handleCheckNickname = useCallback(async () => {
     await checkNickname(memberForm.nickname)
