@@ -1,19 +1,19 @@
 package com.example.kotlinback.member.service
 
-import com.example.kotlinback.k.common.jwt.provider.JwtProvider
-import com.example.kotlinback.k.common.mail.dto.MailTo
-import com.example.kotlinback.k.common.mail.service.GoogleEmailService
-import com.example.kotlinback.k.common.util.ObjectUtil
-import com.example.kotlinback.k.member.authcode.AuthCode
-import com.example.kotlinback.k.member.authcode.AuthCodeRedisRepository
-import com.example.kotlinback.k.member.dto.LoginDto
-import com.example.kotlinback.k.member.dto.MemberDto
-import com.example.kotlinback.k.member.dto.SignUpDto
-import com.example.kotlinback.k.member.entity.Member
-import com.example.kotlinback.k.member.refresh.entity.RefreshToken
-import com.example.kotlinback.k.member.refresh.repository.RefreshTokenRedisRepository
-import com.example.kotlinback.k.member.repository.MemberRepository
-import lombok.RequiredArgsConstructor
+import com.example.kotlinback.common.jwt.provider.JwtProvider
+import com.example.kotlinback.common.mail.dto.MailTo
+import com.example.kotlinback.common.mail.service.GoogleEmailService
+import com.example.kotlinback.common.util.ObjectUtil
+import com.example.kotlinback.member.authcode.AuthCode
+import com.example.kotlinback.member.authcode.AuthCodeRedisRepository
+import com.example.kotlinback.member.dto.LoginDto
+import com.example.kotlinback.member.dto.MemberDto
+import com.example.kotlinback.member.dto.SignUpDto
+import com.example.kotlinback.member.entity.Member
+import com.example.kotlinback.member.exception.*
+import com.example.kotlinback.member.refresh.entity.RefreshToken
+import com.example.kotlinback.member.refresh.repository.RefreshTokenRedisRepository
+import com.example.kotlinback.member.repository.MemberRepository
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -22,33 +22,33 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Service
-@RequiredArgsConstructor
-class MemberServiceImpl : MemberService {
-    private val memberRepository: MemberRepository? = null
-    private val passwordEncoder: PasswordEncoder? = null
-    private val jwtProvider: JwtProvider? = null
-    private val refreshTokenRedisRepository: RefreshTokenRedisRepository? = null
-    private val googleEmailService: GoogleEmailService? = null
-    private val authCodeRedisRepository: AuthCodeRedisRepository? = null
-    override fun signUp(signUpDto: SignUpDto?) {
-        if (signUpDto.getPassword1() != signUpDto.getPassword2()) {
+class MemberServiceImpl(
+    private val memberRepository: MemberRepository,
+    private val passwordEncoder: PasswordEncoder,
+    private val jwtProvider: JwtProvider,
+    private val refreshTokenRedisRepository: RefreshTokenRedisRepository,
+    private val googleEmailService: GoogleEmailService,
+    private val authCodeRedisRepository: AuthCodeRedisRepository
+) : MemberService {
+    override fun signUp(signUpDto: SignUpDto) {
+        if (signUpDto.password1 != signUpDto.password2) {
             throw NotCorrectTwoPasswordException(NOT_CORRECT_TWO_PASSWORD)
         }
-        signUpDto.setPassword1(passwordEncoder!!.encode(signUpDto.getPassword1()))
-        val optionalAuthCode = authCodeRedisRepository!!.findById(signUpDto.getEmail())
-        if (optionalAuthCode.isEmpty || !optionalAuthCode.get().certifiedYn) {
+        signUpDto.password1 = passwordEncoder.encode(signUpDto.password1)
+        val optionalAuthCode = authCodeRedisRepository.findById(signUpDto.email)
+        if (optionalAuthCode.isEmpty || !optionalAuthCode.get().certifiedYn!!) {
             throw NotCertifiedEmailException(EMAIL_NOT_CERTIFIED)
         }
         val member: Member = Member.Companion.from(MemberDto.Companion.from(signUpDto))
-        memberRepository!!.save(member)
+        memberRepository.save(member)
         authCodeRedisRepository.delete(optionalAuthCode.get())
     }
 
-    override fun login(loginDto: LoginDto?): Map<String, String?>? {
-        val member = ObjectUtil.isNullExceptionElseReturnObJect(
-            memberRepository!!.findByUsername(loginDto.getUsername()), NOT_FOUND_MEMBER
+    override fun login(loginDto: LoginDto): Map<String, String> {
+        val member = ObjectUtil.isNullExceptionElseReturnObject(
+            memberRepository.findByUsername(loginDto.username), NOT_FOUND_MEMBER
         )
-        if (!passwordEncoder!!.matches(loginDto.getPassword(), member.password)) {
+        if (!passwordEncoder.matches(loginDto.password, member.password)) {
             throw NotRightLoginInfoException(NOT_RIGHT_LOGIN_INFO)
         }
         return java.util.Map.of(
@@ -59,22 +59,22 @@ class MemberServiceImpl : MemberService {
         )
     }
 
-    private fun generateAccessToken(member: Member?): String? {
-        return jwtProvider!!.generateAccessToken(member.getAccessTokenClaims(), ACCESS_TOKEN_MAXAGE)
+    private fun generateAccessToken(member: Member): String {
+        return jwtProvider.generateAccessToken(member.accessTokenClaims, ACCESS_TOKEN_MAXAGE)
     }
 
-    private fun generateRefreshToken(member: Member?): String {
-        val refreshTokenString = generateRefreshToken(member.getCreateDateTime(), member.getMemId())
+    private fun generateRefreshToken(member: Member): String {
+        val refreshTokenString = generateRefreshToken(member.createDateTime, member.memId)
         try {
-            val refreshToken = ObjectUtil.isNullExceptionElseReturnObJect(
-                refreshTokenRedisRepository!!.findById(member.getMemId())
+            val refreshToken = ObjectUtil.isNullExceptionElseReturnObject(
+                refreshTokenRedisRepository.findById(member.memId)
             )
-            refreshToken!!.update(refreshTokenString)
+            refreshToken.update(refreshTokenString)
             refreshTokenRedisRepository.save(refreshToken)
         } catch (e: NullPointerException) {
-            return refreshTokenRedisRepository!!.save<RefreshToken>(
-                RefreshToken.Companion.from(
-                    member.getMemId(),
+            return refreshTokenRedisRepository.save<RefreshToken>(
+                RefreshToken.from(
+                    member.memId,
                     refreshTokenString
                 )
             ).refreshToken
@@ -90,36 +90,34 @@ class MemberServiceImpl : MemberService {
             .toString()
     }
 
-    override fun confirmMemberByNickname(nickname: String?) {
-        val optionalMember = memberRepository!!.findByNickname(nickname)
-        if (optionalMember!!.isPresent) {
+    override fun confirmMemberByNickname(nickname: String) {
+        val optionalMember = memberRepository.findByNickname(nickname)
+        if (optionalMember.isPresent) {
             throw AlreadyExistMemberException(NICKNAME_CANNOT_USED)
         }
     }
 
-    override fun confirmMemberByUsername(username: String?) {
-        val optionalMember = memberRepository!!.findByUsername(username)
-        if (optionalMember!!.isPresent) {
+    override fun confirmMemberByUsername(username: String) {
+        val optionalMember = memberRepository.findByUsername(username)
+        if (optionalMember.isPresent) {
             throw AlreadyExistMemberException(USERNAME_CANNOT_USED)
         }
     }
 
-    override fun getByUsername(username: String?): MemberDto? {
-        val optionalMember = memberRepository!!.findByUsername(username)
-        if (optionalMember!!.isEmpty) {
+    override fun getByUsername(username: String): MemberDto {
+        val optionalMember = memberRepository.findByUsername(username)
+        if (optionalMember.isEmpty) {
             throw NotFoundMemberException(NOT_FOUND_MEMBER)
         }
         return optionalMember.get().toDto()
     }
 
-    override fun getAccessTokenWithRefreshToken(inputRefreshToken: String?): String? {
-        val refreshToken = ObjectUtil.isNullExceptionElseReturnObJect(
-            refreshTokenRedisRepository!!.findByRefreshToken(inputRefreshToken), EXPIRE_RELOGIN_MSG
+    override fun getAccessTokenWithRefreshToken(inputRefreshToken: String): String {
+        val refreshToken = ObjectUtil.isNullExceptionElseReturnObject(
+            refreshTokenRedisRepository.findByRefreshToken(inputRefreshToken), EXPIRE_RELOGIN_MSG
         )
         return generateAccessToken(
-            ObjectUtil.isNullExceptionElseReturnObJect(
-                memberRepository!!.findById(refreshToken.id)
-            )
+            ObjectUtil.isNullExceptionElseReturnObject(memberRepository.findById(refreshToken.id))
         )
     }
 
@@ -127,31 +125,31 @@ class MemberServiceImpl : MemberService {
         deleteRefreshToken(memId)
     }
 
-    override fun sendEmailAndSaveTempData(email: String?) {
+    override fun sendEmailAndSaveTempData(email: String) {
         // 이메일에 대응하는 key 생성
         // 이메일 전송
         // redis에 email - key 저장
-        if (memberRepository!!.findByEmail(email).isPresent) {
+        if (memberRepository.findByEmail(email).isPresent) {
             throw DataIntegrityViolationException(EMAIL_DUPLICATION_MSG)
         }
         val authCode = ObjectUtil.generateRandomStringOnlyNumber()
-        googleEmailService!!.sendEmail(MailTo.Companion.sendEmailAuthCode(authCode, email))
-        authCodeRedisRepository!!.save<AuthCode>(AuthCode.Companion.from(authCode, email))
+        googleEmailService.sendEmail(MailTo.Companion.sendEmailAuthCode(authCode, email))
+        authCodeRedisRepository.save<AuthCode>(AuthCode.Companion.from(authCode, email))
     }
 
     override fun confirmEmailAndCode(email: String, code: String) {
-        val authCode = ObjectUtil.isNullExceptionElseReturnObJect(
-            authCodeRedisRepository!!.findById(email), EMAIL_FAIL_AUTH
+        val authCode = ObjectUtil.isNullExceptionElseReturnObject(
+            authCodeRedisRepository.findById(email), EMAIL_FAIL_AUTH
         )
         if (authCode.code != code) {
             throw NotCorrectEmailAuthCodeException(EMAIL_FAIL_AUTH)
         }
-        authCode!!.certifiedYn = true
+        authCode.certifiedYn = true
         authCodeRedisRepository.save(authCode)
     }
 
     private fun deleteRefreshToken(memId: String) {
-        refreshTokenRedisRepository!!.deleteById(memId)
+        refreshTokenRedisRepository.deleteById(memId)
     }
 
     companion object {

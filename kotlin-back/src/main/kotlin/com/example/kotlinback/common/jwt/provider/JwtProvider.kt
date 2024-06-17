@@ -14,7 +14,7 @@ import kotlin.collections.HashMap
 @Component
 class JwtProvider {
     private val secretKey: SecretKey? = null
-    fun generateAccessToken(claims: Map<String?, Any?>?, seconds: Int): String {
+    fun generateAccessToken(claims: Map<String, Any>, seconds: Int): String {
         val now = Date().time
         val accessTokenExpiresIn = Date(now + 1000L * seconds)
         return Jwts.builder()
@@ -58,7 +58,7 @@ class JwtProvider {
         private val objectMapper: ObjectMapper
             private get() = AppConfig.objectMapper()
 
-        fun jsonToStr(claims: Map<String?, Any?>?): Any {
+        fun jsonToStr(claims: Map<String, Any>): Any {
             val objectMapper = ObjectMapper()
             return try {
                 objectMapper.writeValueAsString(claims)

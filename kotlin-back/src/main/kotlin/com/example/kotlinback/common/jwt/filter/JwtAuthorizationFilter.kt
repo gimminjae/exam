@@ -15,10 +15,10 @@ import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
 
 @Component
-class JwtAuthorizationFilter : OncePerRequestFilter() {
-    private val jwtProvider: JwtProvider? = null
-    private val memberService: MemberService? = null
-
+class JwtAuthorizationFilter(
+    private val jwtProvider: JwtProvider,
+    private val memberService: MemberService
+) : OncePerRequestFilter() {
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -28,18 +28,18 @@ class JwtAuthorizationFilter : OncePerRequestFilter() {
         val accessToken = request.getHeader("Authentication")
         if (accessToken != null && !accessToken.isEmpty()) {
             // 1차 체크(정보가 변조되지 않았는지 체크)
-            if (jwtProvider!!.verify(accessToken)) {
+            if (jwtProvider.verify(accessToken)) {
                 val claims = jwtProvider.getClaims(accessToken)
-                val username = claims!!["username"] as String?
-                val memberDto = memberService!!.getByUsername(username)
+                val username = claims["username"] as String
+                val memberDto = memberService.getByUsername(username)
                 forceAuthentication(memberDto)
             }
         }
         filterChain.doFilter(request, response) //다음 필터를 실행시켜 주어야 한다
     }
 
-    private fun forceAuthentication(memberDto: MemberDto?) {
-        val authUser = AuthUser(memberDto, memberDto?.authorities)
+    private fun forceAuthentication(memberDto: MemberDto) {
+        val authUser = AuthUser(memberDto, memberDto.authorities)
         val authentication = UsernamePasswordAuthenticationToken.authenticated(
             authUser,
             null,

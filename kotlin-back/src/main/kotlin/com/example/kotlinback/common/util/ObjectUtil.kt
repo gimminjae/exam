@@ -13,7 +13,7 @@ class ObjectUtil {
             return generateRandomStringByInput(CHARACTERS)
         }
 
-        fun <T> isNullExceptionElseReturnObject(optionalT: Optional<T?>): T {
+        fun <T> isNullExceptionElseReturnObject(optionalT: Optional<T>): T {
             val t = optionalT.orElse(null)
             if (t == null) {
                 throw NullPointerException("데이터가 존재하지 않습니다.")
@@ -21,8 +21,8 @@ class ObjectUtil {
             return t
         }
 
-        fun <T> isNullExceptionElseReturnObject(optionalT: Optional<T?>?, message: String?): T {
-            return optionalT!!.orElse(null) ?: throw NullPointerException(message)
+        fun <T> isNullExceptionElseReturnObject(optionalT: Optional<T>, message: String): T {
+            return optionalT.orElse(null) ?: throw NullPointerException(message)
         }
 
         fun divide(numerator: Float, denominator: Float): String {

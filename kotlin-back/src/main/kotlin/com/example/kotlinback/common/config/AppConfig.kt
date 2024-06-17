@@ -14,10 +14,10 @@ class AppConfig {
         fun objectMapper(): ObjectMapper {
             return ObjectMapper().registerModule(JavaTimeModule())
         }
+    }
 
-        @Bean
-        fun passwordEncoder(): PasswordEncoder {
-            return BCryptPasswordEncoder()
-        }
+    @Bean
+    fun passwordEncoder(): PasswordEncoder {
+        return BCryptPasswordEncoder()
     }
 }
