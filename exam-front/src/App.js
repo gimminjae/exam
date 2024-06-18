@@ -12,6 +12,8 @@ function App() {
             <Link to="/">홈</Link>
             |
             <Link to="/sign-up">회원가입</Link>
+            |
+            <Link to="/sign-in">로그인</Link>
           </nav>
           <Router/>
         </div>
