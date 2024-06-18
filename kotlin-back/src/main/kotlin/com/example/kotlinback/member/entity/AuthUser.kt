@@ -16,17 +16,17 @@ class AuthUser(memberDto: MemberDto, authorities: List<GrantedAuthority>) :
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     var createDateTime: LocalDateTime?
     var role: String = ""
-    var username: String = ""
+    var usersname: String = ""
 
     init {
         memId = memberDto.memId
         nickname = memberDto.nickname
         role = authorities[0].toString()
         createDateTime = memberDto.createDateTime
-        this.username = memberDto.username
+        usersname = memberDto.username
     }
 
-    override fun getAuthorities(): Set<GrantedAuthority> {
-        return HashSet(super.getAuthorities())
-    }
+//    override fun getAuthorities(): Set<GrantedAuthority> {
+//        return HashSet(super.getAuthorities())
+//    }
 }

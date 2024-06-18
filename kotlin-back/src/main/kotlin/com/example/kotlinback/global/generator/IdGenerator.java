@@ -14,23 +14,13 @@ import java.time.LocalDate;
 import java.util.Properties;
 import java.util.UUID;
 
-public class IdGenerator implements IdentifierGenerator, Configurable {
-    public static final String ENTITY_TYPE = "entityType";
-    private String entityType;
-
+public class IdGenerator implements IdentifierGenerator {
     @Override
     public Serializable generate(SharedSessionContractImplementor session,
                                  Object object) throws HibernateException {
-        return "%s%s%s".formatted(
+        return "%s%s".formatted(
                 LocalDate.now().toString().replace("-", ""),
-                this.entityType,
                 UUID.randomUUID().toString()
         );
-    }
-    @Override
-    public void configure(Type type,
-                          Properties params,
-                          ServiceRegistry serviceRegistry) throws MappingException {
-        this.entityType = ConfigurationHelper.getString(ENTITY_TYPE, params);
     }
 }

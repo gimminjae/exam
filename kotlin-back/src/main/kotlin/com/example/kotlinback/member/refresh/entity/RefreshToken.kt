@@ -14,12 +14,8 @@ class RefreshToken(
     @Indexed
     var refreshToken: String = ""
 ) {
-    fun setRefreshToken(refreshToken: String) {
-        this.refreshToken = refreshToken
-    }
-
     fun update(sb: String) {
-        setRefreshToken(sb)
+        this.refreshToken = sb
     }
 
     companion object {

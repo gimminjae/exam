@@ -18,21 +18,10 @@ class AuthCode(
 
     @Indexed
     private var refreshToken: String = ""
-    fun setExpiredDateTime(expiredDateTime: LocalDateTime?) {
+
+    fun update(expiredDateTime: LocalDateTime, sb: String) {
+        this.refreshToken = sb
         this.expiredDateTime = expiredDateTime
-    }
-
-    fun setRefreshToken(refreshToken: String) {
-        this.refreshToken = refreshToken
-    }
-
-    fun setCertifiedYn(certifiedYn: Boolean?) {
-        this.certifiedYn = certifiedYn
-    }
-
-    fun update(expiredDateTime: LocalDateTime?, sb: String) {
-        setRefreshToken(sb)
-        setExpiredDateTime(expiredDateTime)
     }
 
     companion object {

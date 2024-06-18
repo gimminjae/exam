@@ -7,7 +7,6 @@ import com.example.kotlinback.member.dto.Role
 import jakarta.persistence.*
 import org.hibernate.annotations.DynamicInsert
 import org.hibernate.annotations.GenericGenerator
-import org.hibernate.annotations.Parameter
 import java.time.LocalDateTime
 
 @Entity
@@ -17,7 +16,10 @@ import java.time.LocalDateTime
 class Member(
     @Id
     @Column(columnDefinition = "varchar(100)", name = "memId")
-    @GenericGenerator(name = "memId", strategy = "com.example.kotlinback.common.generator.IdGenerator", parameters = [Parameter(name = IdGenerator.ENTITY_TYPE, value = "M")])
+    @GenericGenerator(
+        name = "memId",
+        type = IdGenerator::class
+    )
     @GeneratedValue(generator = "memId")
     val memId: String = "",
 
