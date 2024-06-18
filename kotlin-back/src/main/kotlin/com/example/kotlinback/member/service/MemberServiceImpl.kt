@@ -1,9 +1,9 @@
 package com.example.kotlinback.member.service
 
-import com.example.kotlinback.common.jwt.provider.JwtProvider
-import com.example.kotlinback.common.mail.dto.MailTo
-import com.example.kotlinback.common.mail.service.GoogleEmailService
-import com.example.kotlinback.common.util.ObjectUtil
+import com.example.kotlinback.global.jwt.provider.JwtProvider
+import com.example.kotlinback.global.mail.dto.MailTo
+import com.example.kotlinback.global.mail.service.GoogleEmailService
+import com.example.kotlinback.global.util.ObjectUtil
 import com.example.kotlinback.member.authcode.AuthCode
 import com.example.kotlinback.member.authcode.AuthCodeRedisRepository
 import com.example.kotlinback.member.dto.LoginDto

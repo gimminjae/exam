@@ -1,11 +1,10 @@
 package com.example.kotlinback.member.entity
 
-import com.example.kotlinback.common.generator.IdGenerator
+import com.example.kotlinback.global.generator.IdGenerator
 import com.example.kotlinback.member.dto.MemberDto
 import com.example.kotlinback.member.dto.MemberType
 import com.example.kotlinback.member.dto.Role
 import jakarta.persistence.*
-import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.DynamicInsert
 import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.Parameter

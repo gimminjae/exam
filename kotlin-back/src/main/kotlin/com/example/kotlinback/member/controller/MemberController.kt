@@ -1,6 +1,6 @@
 package com.example.kotlinback.member.controller
 
-import com.example.kotlinback.common.validation.ValidationUtil
+import com.example.kotlinback.global.validation.ValidationUtil
 import com.example.kotlinback.member.dto.LoginDto
 import com.example.kotlinback.member.dto.SignUpDto
 import com.example.kotlinback.member.entity.AuthUser
