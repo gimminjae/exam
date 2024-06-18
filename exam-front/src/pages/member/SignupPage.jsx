@@ -3,7 +3,7 @@ import useApi from "../../hooks/useApi";
 import {memberService} from "../../core.api.member";
 import util from "../../hooks/util";
 
-function SignUpForm() {
+function SignUpPage() {
   const initialMemberForm = {
     username: '',
     nickname: '',
@@ -53,7 +53,7 @@ function SignUpForm() {
   const handleCheckUsername = useCallback(async () => {
     await checkUsername(memberForm.username)
   }, [memberForm.username])
-  
+
 
   const handleCheckNickname = useCallback(async () => {
     await checkNickname(memberForm.nickname)
@@ -153,4 +153,4 @@ function SignUpForm() {
   );
 }
 
-export default SignUpForm;
+export default SignUpPage;
