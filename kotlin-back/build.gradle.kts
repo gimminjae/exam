@@ -28,6 +28,8 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
 
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
