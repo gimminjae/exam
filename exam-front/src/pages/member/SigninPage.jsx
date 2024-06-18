@@ -1,4 +1,5 @@
 import React, {useState, useCallback} from 'react';
+import LabelInput from "../../components/LabelInput";
 
 function SignInPage() {
   const initialLoginForm = {
@@ -26,24 +27,24 @@ function SignInPage() {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="userId">아이디:</label>
-          <input
-            type="text"
-            id="username"
-            value={loginForm.username}
-            onChange={(e) => handleLoginFormChange(e.target)}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">비밀번호:</label>
-          <input
-            type="password"
-            id="password"
-            value={loginForm.password}
-            onChange={(e) => handleLoginFormChange(e.target)}
-          />
-        </div>
+        <LabelInput
+          labelText="아이디"
+          type="text"
+          id="username"
+          name="username"
+          value={loginForm.username}
+          placeholder=""
+          onChange={(e) => handleLoginFormChange(e.target)}
+        />
+        <LabelInput
+          labelText="비밀번호"
+          type="password"
+          id="password"
+          name="password"
+          value={loginForm.password}
+          placeholder=""
+          onChange={(e) => handleLoginFormChange(e.target)}
+        />
         <button type="submit">로그인</button>
       </form>
     </>
