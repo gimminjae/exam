@@ -51,11 +51,9 @@ class MemberServiceImpl(
         if (!passwordEncoder.matches(loginDto.password, member.password)) {
             throw NotRightLoginInfoException(NOT_RIGHT_LOGIN_INFO)
         }
-        return java.util.Map.of(
-            "accessToken",
-            generateAccessToken(member),
-            "refreshToken",
-            generateRefreshToken(member)
+        return mapOf(
+            "accessToken" to generateAccessToken(member),
+            "refreshToken" to generateRefreshToken(member)
         )
     }
 
@@ -126,9 +124,6 @@ class MemberServiceImpl(
     }
 
     override fun sendEmailAndSaveTempData(email: String) {
-        // 이메일에 대응하는 key 생성
-        // 이메일 전송
-        // redis에 email - key 저장
         if (memberRepository.findByEmail(email).isPresent) {
             throw DataIntegrityViolationException(EMAIL_DUPLICATION_MSG)
         }

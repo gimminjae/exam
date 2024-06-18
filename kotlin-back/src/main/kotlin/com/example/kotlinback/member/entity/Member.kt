@@ -66,11 +66,11 @@ class Member(
     }
 
     val accessTokenClaims: Map<String, Any>
-        get() = java.util.Map.of<String, Any>(
-            "username", username,
-            "createDateTime", createDateTime.toString(),
-            "nickname", nickname,
-            "role", role.name
+        get() = mapOf<String, Any>(
+            "username" to username,
+            "createDateTime" to createDateTime.toString(),
+            "nickname" to nickname,
+            "role" to role.name
         )
 
     companion object {

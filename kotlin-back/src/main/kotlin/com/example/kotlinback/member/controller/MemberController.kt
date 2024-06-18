@@ -66,15 +66,15 @@ class MemberController(
 
     @Operation(summary = "sign out - 로그아웃", description = "")
     @GetMapping("/sign-out")
-    fun regenerateAccessToken(@AuthenticationPrincipal authUser: AuthUser): ResponseEntity<String> {
+    fun signOut(@AuthenticationPrincipal authUser: AuthUser): ResponseEntity<String> {
         memberService.signOut(authUser.memId)
         return ResponseEntity(HttpStatus.OK)
     }
 
     @Operation(summary = "get me - 로그인 회원 정보 조회", description = "")
     @GetMapping("")
-    fun getMe(@AuthenticationPrincipal authUser: AuthUser): ResponseEntity<Map<String, Any>> {
-        return ResponseEntity(java.util.Map.of<String, Any>("member", authUser), HttpStatus.OK)
+    fun getMe(@AuthenticationPrincipal authUser: AuthUser): ResponseEntity<Map<String, AuthUser>> {
+        return ResponseEntity(mapOf("member" to authUser), HttpStatus.OK)
     }
 
     @Operation(summary = "send email - 이메일 인증 코드 전송", description = "")
