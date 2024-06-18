@@ -39,7 +39,7 @@ class MemberServiceImpl(
         if (optionalAuthCode.isEmpty || !optionalAuthCode.get().certifiedYn!!) {
             throw NotCertifiedEmailException(EMAIL_NOT_CERTIFIED)
         }
-        val member: Member = Member.Companion.from(MemberDto.Companion.from(signUpDto))
+        val member: Member = Member.from(MemberDto.from(signUpDto))
         memberRepository.save(member)
         authCodeRedisRepository.delete(optionalAuthCode.get())
     }
@@ -72,7 +72,7 @@ class MemberServiceImpl(
             refreshToken.update(refreshTokenString)
             refreshTokenRedisRepository.save(refreshToken)
         } catch (e: NullPointerException) {
-            return refreshTokenRedisRepository.save<RefreshToken>(
+            return refreshTokenRedisRepository.save(
                 RefreshToken.from(
                     member.memId,
                     refreshTokenString
@@ -133,8 +133,8 @@ class MemberServiceImpl(
             throw DataIntegrityViolationException(EMAIL_DUPLICATION_MSG)
         }
         val authCode = ObjectUtil.generateRandomStringOnlyNumber()
-        googleEmailService.sendEmail(MailTo.Companion.sendEmailAuthCode(authCode, email))
-        authCodeRedisRepository.save<AuthCode>(AuthCode.Companion.from(authCode, email))
+        googleEmailService.sendEmail(MailTo.sendEmailAuthCode(authCode, email))
+        authCodeRedisRepository.save(AuthCode.from(authCode, email))
     }
 
     override fun confirmEmailAndCode(email: String, code: String) {

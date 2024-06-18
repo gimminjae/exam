@@ -12,20 +12,20 @@ import java.util.*
 @RestControllerAdvice
 class GlobalExceptionHandler {
     @ExceptionHandler(NotCorrectTwoPasswordException::class)
-    fun handlerNotCorrectTwoPasswordException(e: NotCorrectTwoPasswordException): ResponseEntity<Map<String, List<String?>>> {
-        return ResponseEntity(java.util.Map.of("errors", java.util.List.of(e.message)), HttpStatus.BAD_REQUEST)
+    fun handlerNotCorrectTwoPasswordException(e: NotCorrectTwoPasswordException): ResponseEntity<Map<String, List<String>>> {
+        return ResponseEntity(mapOf("errors" to listOf(e.message ?: "")), HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(FormValidationException::class)
     fun handlerFormValidationException(e: FormValidationException): ResponseEntity<Map<String, List<String>>> {
         val s = e.message
         val messages = Arrays.stream(s!!.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()).toList()
-        return ResponseEntity(java.util.Map.of("errors", messages), HttpStatus.BAD_REQUEST)
+        return ResponseEntity(mapOf("errors" to messages), HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(IllegalStateException::class)
-    fun handleNullPointerException(e: IllegalStateException): ResponseEntity<Map<String, String?>> {
-        return ResponseEntity(java.util.Map.of("message", e.message), HttpStatus.BAD_REQUEST)
+    fun handleNullPointerException(e: IllegalStateException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity(mapOf("message" to (e.message ?: "")), HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(AccessDeniedException::class)

@@ -18,72 +18,38 @@ import java.time.LocalDateTime
 class Member(
     @Id
     @Column(columnDefinition = "varchar(100)", name = "memId")
-    @GenericGenerator(
-        name = "memId",
-        strategy = "com.example.kotlinback.common.generator.IdGenerator",
-        parameters = [Parameter(name = IdGenerator.ENTITY_TYPE, value = "M")]
-    )
+    @GenericGenerator(name = "memId", strategy = "com.example.kotlinback.common.generator.IdGenerator", parameters = [Parameter(name = IdGenerator.ENTITY_TYPE, value = "M")])
     @GeneratedValue(generator = "memId")
     val memId: String = "",
 
     @Column(columnDefinition = "boolean", name = "useYn", nullable = false)
-    @ColumnDefault("true")
     val useYn: Boolean = true,
 
     @Column(columnDefinition = "varchar(10)", name = "role", nullable = false)
-    @ColumnDefault("'MEMBER'")
     @Enumerated(value = EnumType.STRING)
     val role: Role = Role.MEMBER,
 
-    @Column(
-        name = "createDateTime",
-        nullable = false
-    )
+    @Column(name = "createDateTime", nullable = false)
     val createDateTime: LocalDateTime,
 
-    @Column(
-        name = "updateDateTime",
-        nullable = false
-    )
+    @Column(name = "updateDateTime", nullable = false)
     val updateDateTime: LocalDateTime,
 
-    @Column(
-        columnDefinition = "varchar(50)",
-        name = "username",
-        nullable = false,
-        unique = true
-    )
-    val username: String,
+    @Column(columnDefinition = "varchar(50)", name = "username", nullable = false, unique = true)
+    val username: String = "",
 
-    @Column(
-        columnDefinition = "varchar(50)",
-        name = "email",
-        nullable = false,
-        unique = true
-    )
-    val email: String,
+    @Column(columnDefinition = "varchar(50)", name = "email", nullable = false, unique = true)
+    val email: String = "",
 
-    @Column(
-        columnDefinition = "varchar(255)",
-        name = "password"
-    )
-    val password: String,
+    @Column(columnDefinition = "varchar(255)", name = "password")
+    val password: String = "",
 
-    @Column(
-        columnDefinition = "varchar(50)",
-        name = "nickname",
-        nullable = false,
-        unique = true
-    )
-    val nickname: String,
+    @Column(columnDefinition = "varchar(50)", name = "nickname", nullable = false, unique = true)
+    val nickname: String = "",
 
     @Enumerated(value = EnumType.STRING)
-    @Column(
-        columnDefinition = "varchar(10)",
-        name = "memType",
-        nullable = false
-    )
-    val memType: MemberType
+    @Column(columnDefinition = "varchar(10)", name = "memType", nullable = false)
+    val memType: MemberType = MemberType.COMMON
 ) {
     fun toDto(): MemberDto {
         return MemberDto(
@@ -104,7 +70,7 @@ class Member(
             "username", username,
             "createDateTime", createDateTime.toString(),
             "nickname", nickname,
-            "role", role?.name
+            "role", role.name
         )
 
     companion object {

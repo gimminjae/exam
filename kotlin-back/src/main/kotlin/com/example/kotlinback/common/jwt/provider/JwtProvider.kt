@@ -56,7 +56,7 @@ class JwtProvider {
 
     companion object {
         private val objectMapper: ObjectMapper
-            private get() = AppConfig.objectMapper()
+            get() = AppConfig.objectMapper()
 
         fun jsonToStr(claims: Map<String, Any>): Any {
             val objectMapper = ObjectMapper()

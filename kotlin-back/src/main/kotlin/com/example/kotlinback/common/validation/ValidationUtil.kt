@@ -13,7 +13,7 @@ object ValidationUtil {
             val sb = StringBuilder()
             val errorMessages = bindingResult.allErrors.stream().map { error: ObjectError -> error.defaultMessage }
                 .toList()
-            errorMessages.forEach(Consumer { message: String? -> sb.append("%s\n".formatted(message)) })
+            errorMessages.forEach(Consumer { message: String? -> sb.append("%s\n".format(message)) })
             throw FormValidationException(sb.toString())
         }
     }

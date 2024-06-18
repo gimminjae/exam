@@ -20,7 +20,7 @@ class IdGenerator : IdentifierGenerator, Configurable {
         session: SharedSessionContractImplementor,
         `object`: Any
     ): Serializable {
-        return "%s%s%s".formatted(
+        return "%s%s%s".format(
             LocalDate.now().toString().replace("-", ""),
             entityType,
             UUID.randomUUID().toString()

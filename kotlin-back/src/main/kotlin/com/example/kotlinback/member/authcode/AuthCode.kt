@@ -9,20 +9,20 @@ import java.time.LocalDateTime
 
 class AuthCode(
     @Id
-    var email: String? = null,
-    var code: String? = null,
-    var createdDateTime: LocalDateTime? = null,
-    var expiredDateTime: LocalDateTime? = null,
-    var certifiedYn: Boolean? = null
+    var email: String = "",
+    var code: String = "",
+    var createdDateTime: LocalDateTime?,
+    var expiredDateTime: LocalDateTime?,
+    var certifiedYn: Boolean?
 ) {
 
     @Indexed
-    private var refreshToken: String? = null
+    private var refreshToken: String = ""
     fun setExpiredDateTime(expiredDateTime: LocalDateTime?) {
         this.expiredDateTime = expiredDateTime
     }
 
-    fun setRefreshToken(refreshToken: String?) {
+    fun setRefreshToken(refreshToken: String) {
         this.refreshToken = refreshToken
     }
 
@@ -30,13 +30,13 @@ class AuthCode(
         this.certifiedYn = certifiedYn
     }
 
-    fun update(expiredDateTime: LocalDateTime?, sb: String?) {
+    fun update(expiredDateTime: LocalDateTime?, sb: String) {
         setRefreshToken(sb)
         setExpiredDateTime(expiredDateTime)
     }
 
     companion object {
-        fun from(code: String?, email: String?): AuthCode {
+        fun from(code: String, email: String): AuthCode {
             return AuthCode(
                 email = email,
                 createdDateTime = LocalDateTime.now(),
