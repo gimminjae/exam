@@ -2,6 +2,7 @@ package com.example.kotlinback.member.controller
 
 import com.example.kotlinback.global.validation.ValidationUtil
 import com.example.kotlinback.member.dto.LoginDto
+import com.example.kotlinback.member.dto.PasswordChangeDto
 import com.example.kotlinback.member.dto.SignUpDto
 import com.example.kotlinback.member.entity.AuthUser
 import com.example.kotlinback.member.service.MemberService
@@ -88,6 +89,18 @@ class MemberController(
     @GetMapping("/email-auth")
     fun sendEmail(@RequestParam email: String, @RequestParam code: String): ResponseEntity<Void> {
         memberService.confirmEmailAndCode(email, code)
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    @Operation(summary = "change password - 비밀번호 변경", description = "")
+    @PutMapping("/password")
+    fun changePassword(@AuthenticationPrincipal authUser: AuthUser, @RequestBody passwordChangeDto: PasswordChangeDto): ResponseEntity<Void> {
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    @Operation(summary = "change password And Send it email - 임시 비밀번호 발급 & 이메일로 전송", description = "")
+    @PostMapping("/password")
+    fun tempPasswordAndSendItAtEmail(@RequestParam email: String): ResponseEntity<Void> {
         return ResponseEntity(HttpStatus.OK)
     }
 }
