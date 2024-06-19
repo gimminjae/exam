@@ -25,10 +25,10 @@ class Member(
     @Enumerated(value = EnumType.STRING)
     var role: Role = Role.MEMBER,
 
-    @Column(name = "CREATEDT", nullable = false)
+    @Column(name = "CREATE_DT", nullable = false)
     var createDateTime: LocalDateTime,
 
-    @Column(name = "UPDATEDT", nullable = false)
+    @Column(name = "UPDATE_DT", nullable = false)
     var updateDateTime: LocalDateTime,
 
     @Column(name = "USERNAME", nullable = false, unique = true, length = 50)
@@ -61,7 +61,8 @@ class Member(
             password = this.password,
             memType = this.memType.name,
             role = this.role.name,
-            useYn = this.delYn
+            useYn = this.delYn,
+            email = this.email
         )
     }
 
