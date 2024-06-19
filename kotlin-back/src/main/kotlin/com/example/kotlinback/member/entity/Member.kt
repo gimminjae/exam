@@ -49,7 +49,7 @@ class Member(
 
     @Column(name = "DEL_YN", nullable = false)
     @Convert(converter = BooleanToYNConverter::class)
-    var delYn: Boolean = false,
+    var delYn: Boolean = false
 ) {
     fun toDto(): MemberDto {
         return MemberDto(
