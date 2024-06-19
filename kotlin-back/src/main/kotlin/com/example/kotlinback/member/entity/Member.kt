@@ -1,21 +1,19 @@
 package com.example.kotlinback.member.entity
 
+import com.example.kotlinback.global.BooleanToYNConverter
 import com.example.kotlinback.global.generator.IdGenerator
 import com.example.kotlinback.member.dto.MemberDto
 import com.example.kotlinback.member.dto.MemberType
 import com.example.kotlinback.member.dto.Role
 import jakarta.persistence.*
-import org.hibernate.annotations.DynamicInsert
 import org.hibernate.annotations.GenericGenerator
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "member")
-@DynamicInsert // 엔티티를 save할 때 null 값은 배제하고 insert 쿼리를 날리도록 한다.
-
+@Table(name = "MEMBER")
 class Member(
     @Id
-    @Column(columnDefinition = "varchar(100)", name = "memId")
+    @Column(name = "MEM_ID", length = 50)
     @GenericGenerator(
         name = "memId",
         type = IdGenerator::class
@@ -23,34 +21,35 @@ class Member(
     @GeneratedValue(generator = "memId")
     val memId: String = "",
 
-    @Column(columnDefinition = "boolean", name = "useYn", nullable = false)
-    val useYn: Boolean = true,
-
-    @Column(columnDefinition = "varchar(10)", name = "role", nullable = false)
+    @Column(name = "ROLE", nullable = false, length = 10)
     @Enumerated(value = EnumType.STRING)
-    val role: Role = Role.MEMBER,
+    var role: Role = Role.MEMBER,
 
-    @Column(name = "createDateTime", nullable = false)
-    val createDateTime: LocalDateTime,
+    @Column(name = "CREATEDT", nullable = false)
+    var createDateTime: LocalDateTime,
 
-    @Column(name = "updateDateTime", nullable = false)
-    val updateDateTime: LocalDateTime,
+    @Column(name = "UPDATEDT", nullable = false)
+    var updateDateTime: LocalDateTime,
 
-    @Column(columnDefinition = "varchar(50)", name = "username", nullable = false, unique = true)
-    val username: String = "",
+    @Column(name = "USERNAME", nullable = false, unique = true, length = 50)
+    var username: String = "",
 
-    @Column(columnDefinition = "varchar(50)", name = "email", nullable = false, unique = true)
-    val email: String = "",
+    @Column(name = "EMAIL", nullable = false, unique = true, length = 50)
+    var email: String = "",
 
-    @Column(columnDefinition = "varchar(255)", name = "password")
-    val password: String = "",
+    @Column(name = "PASSWORD", length = 50)
+    var password: String = "",
 
-    @Column(columnDefinition = "varchar(50)", name = "nickname", nullable = false, unique = true)
-    val nickname: String = "",
+    @Column(name = "NICKNAME", nullable = false, unique = true, length = 50)
+    var nickname: String = "",
 
     @Enumerated(value = EnumType.STRING)
-    @Column(columnDefinition = "varchar(10)", name = "memType", nullable = false)
-    val memType: MemberType = MemberType.COMMON
+    @Column(name = "MEM_TYPE", nullable = false, length = 50)
+    var memType: MemberType = MemberType.COMMON,
+
+    @Column(name = "DEL_YN", nullable = false)
+    @Convert(converter = BooleanToYNConverter::class)
+    var delYn: Boolean = false,
 ) {
     fun toDto(): MemberDto {
         return MemberDto(
@@ -62,7 +61,7 @@ class Member(
             password = this.password,
             memType = this.memType.name,
             role = this.role.name,
-            useYn = this.useYn
+            useYn = this.delYn
         )
     }
 
